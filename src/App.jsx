@@ -51,7 +51,7 @@ const App = () => {
   const tabs = ['Home', 'Our Story', 'Photos', 'Travel', 'Registry', 'RSVP'];
 
   const galleryPhotos = Array.from({ length: 17 }, (_, i) => ({
-    src: `images/gallery/photo_${i + 3}.jpg`
+    src: `${import.meta.env.BASE_URL}images/gallery/photo_${i + 3}.jpg`
   }));
 
   const filteredGuests = rsvpSearch.length >= 2 
@@ -160,7 +160,7 @@ const App = () => {
             </div>
             
             <div className="bow-container">
-              <img src="images/photo_2.jpg" alt="Decorative Bow" className="header-bow" />
+              <img src={`${import.meta.env.BASE_URL}images/photo_2.jpg`} alt="Decorative Bow" className="header-bow" />
             </div>
             <h1 className="names-title">Katie & Levin</h1>
             <div className="header-details">
@@ -221,7 +221,7 @@ const App = () => {
               <div className="tab-pane story-pane">
                 <h2 className="story-title">LEVIN LOVES KATIE & KATIE LOVES LEVIN -- SUPREME!</h2>
                 <div className="story-image-container">
-                  <img src="images/photo_20.jpg" alt="Katie and Levin on a cliff" className="main-story-image" />
+                  <img src={`${import.meta.env.BASE_URL}images/photo_20.jpg`} alt="Katie and Levin on a cliff" className="main-story-image" />
                 </div>
                 <div className="story-verbatim-text">
                   <p>Katie and Levin's romance blossomed while they were living in San Francisco. Their first date was at Java Beach Cafe. Katie was there early; Levin ordered a BLT for breakfast. Engrossed in conversation, they walked on Ocean Beach down to The Cliff House and back multiple times over. Parting ways with a "we should do this again sometime," and they did.</p>
