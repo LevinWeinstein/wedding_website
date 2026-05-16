@@ -404,8 +404,9 @@ body {
 .regrets-banner {
   margin-top: 6rem;
   padding: 4rem 2rem;
-  background: var(--bg-cream);
-  border-top: 1px solid var(--border-color);
+  background: #fdf2f2; /* Soft, warm red tint */
+  border-top: 1px solid #f1dada;
+  border-bottom: 1px solid #f1dada;
   text-align: center;
 }
 
@@ -413,14 +414,14 @@ body {
   font-family: var(--font-sans);
   font-size: 0.9rem;
   letter-spacing: 2px;
-  color: var(--text-olive);
+  color: #a64d4d; /* Muted terracotta red */
   margin-bottom: 1.5rem;
 }
 
 .regrets-btn {
   background: none;
-  border: 1px solid var(--text-olive);
-  color: var(--text-olive);
+  border: 1px solid #a64d4d;
+  color: #a64d4d;
   padding: 0.8rem 2rem;
   font-family: inherit;
   font-size: 0.9rem;
@@ -429,8 +430,38 @@ body {
 }
 
 .regrets-btn:hover {
-  background: var(--text-olive);
+  background: #a64d4d;
   color: white;
+}
+
+.home-hero-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 3rem 0;
+}
+
+.regrets-link-btn {
+  background: none;
+  border: none;
+  color: #a64d4d;
+  font-family: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.regrets-link-btn:hover {
+  opacity: 1;
+}
+
+.hero-regrets-banner {
+  margin-top: 1rem;
+  margin-bottom: 3rem;
+  padding: 3rem 2rem;
 }
 
 .quick-no-form {
@@ -462,7 +493,7 @@ body {
 }
 
 .quick-no-success {
-  color: var(--text-olive);
+  color: #a64d4d;
   margin-top: 1rem;
 }
 

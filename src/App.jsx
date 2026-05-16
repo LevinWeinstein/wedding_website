@@ -263,21 +263,7 @@ const App = () => {
                   <h2 className="handwritten">Mill Valley, California</h2>
                 </div>
 
-                <button className="rsvp-hero-btn" onClick={() => setActiveTab('RSVP')}>RSVP</button>
-
-                <div className="wedding-day-summary">
-                  <h3>WEDDING DAY</h3>
-                  <p className="summary-date">JULY 24, 2027</p>
-                  <hr className="summary-hr" />
-                  <div className="ceremony-details">
-                    <h4>CEREMONY & RECEPTION</h4>
-                    <p>The Outdoor Art Club</p>
-                    <p>1 West Blithedale Avenue, Mill Valley, CA, 94941, United States</p>
-                  </div>
-                  <hr className="summary-hr" />
-                </div>
-
-                <div className="regrets-banner">
+                <div className="regrets-banner hero-regrets-banner">
                   <h3>CAN'T ATTEND? LET US KNOW HERE</h3>
                   {!showRegretsForm ? (
                     <button className="regrets-btn" onClick={() => setShowRegretsForm(true)}>LET US KNOW</button>
@@ -353,6 +339,22 @@ const App = () => {
                       )}
                     </div>
                   )}
+                </div>
+
+                <div className="home-hero-actions">
+                  <button className="rsvp-hero-btn" onClick={() => setActiveTab('RSVP')}>RSVP</button>
+                </div>
+
+                <div className="wedding-day-summary">
+                  <h3>WEDDING DAY</h3>
+                  <p className="summary-date">JULY 24, 2027</p>
+                  <hr className="summary-hr" />
+                  <div className="ceremony-details">
+                    <h4>CEREMONY & RECEPTION</h4>
+                    <p>The Outdoor Art Club</p>
+                    <p>1 West Blithedale Avenue, Mill Valley, CA, 94941, United States</p>
+                  </div>
+                  <hr className="summary-hr" />
                 </div>
               </div>
             )}
