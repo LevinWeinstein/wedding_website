@@ -12,7 +12,7 @@ const App = () => {
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null);
-  
+
   // RSVP State
   const [guests, setGuests] = useState([]);
   const [rsvpSearch, setRsvpSearch] = useState('');
@@ -54,7 +54,7 @@ const App = () => {
     src: `${import.meta.env.BASE_URL}images/gallery/photo_${i + 3}.jpg`
   }));
 
-  const filteredGuests = rsvpSearch.length >= 2 
+  const filteredGuests = rsvpSearch.length >= 2
     ? guests.filter(g => g.Name.toLowerCase().includes(rsvpSearch.toLowerCase()))
     : [];
 
@@ -63,18 +63,18 @@ const App = () => {
     const group = guests.filter(g => g.GroupID === guest.GroupID && guest.GroupID !== '');
     // If no GroupID, just the individual
     const finalGroup = group.length > 0 ? group : [guest];
-    
+
     setSelectedGroup(finalGroup);
-    
+
     const initialResponses = {};
     finalGroup.forEach(member => {
-      initialResponses[member.Name] = { 
+      initialResponses[member.Name] = {
         name: member.Name,
-        attending: member.Attending || '', 
-        meal: member.Meal || '', 
-        notes: member.Notes || '', 
-        email: member.Email || '', 
-        phone: member.Phone || '' 
+        attending: member.Attending || '',
+        meal: member.Meal || '',
+        notes: member.Notes || '',
+        email: member.Email || '',
+        phone: member.Phone || ''
       };
     });
     setGroupResponses(initialResponses);
@@ -90,7 +90,7 @@ const App = () => {
   const handleSubmitRSVP = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     const payload = Object.values(groupResponses);
 
     try {
@@ -158,9 +158,9 @@ const App = () => {
               </div>
               <div className="spacer"></div>
             </div>
-            
+
             <div className="bow-container">
-              <img src="/wedding_website/images/photo_2.jpg" alt="Decorative Bow" className="header-bow" />
+              <img src={`${import.meta.env.BASE_URL}images/photo_2.jpg`} alt="Decorative Bow" className="header-bow" />
             </div>
             <h1 className="names-title">Katie & Levin</h1>
             <div className="header-details">
@@ -194,15 +194,15 @@ const App = () => {
                     <h2 className="handwritten">Mill Valley<br />California</h2>
                   </div>
                 </div>
-                
+
                 <div className="mobile-home-info">
-                   <h2 className="handwritten">July 24, 2027</h2>
-                   <div className="mobile-dot">•</div>
-                   <h2 className="handwritten">Mill Valley, California</h2>
+                  <h2 className="handwritten">July 24, 2027</h2>
+                  <div className="mobile-dot">•</div>
+                  <h2 className="handwritten">Mill Valley, California</h2>
                 </div>
 
                 <button className="rsvp-hero-btn" onClick={() => setActiveTab('RSVP')}>RSVP</button>
-                
+
                 <div className="wedding-day-summary">
                   <h3>WEDDING DAY</h3>
                   <p className="summary-date">JULY 24, 2027</p>
@@ -221,7 +221,7 @@ const App = () => {
               <div className="tab-pane story-pane">
                 <h2 className="story-title">LEVIN LOVES KATIE & KATIE LOVES LEVIN -- SUPREME!</h2>
                 <div className="story-image-container">
-                  <img src="/wedding_website/images/photo_20.jpg" alt="Katie and Levin on a cliff" className="main-story-image" />
+                  <img src={`${import.meta.env.BASE_URL}images/photo_20.jpg`} alt="Katie and Levin on a cliff" className="main-story-image" />
                 </div>
                 <div className="story-verbatim-text">
                   <p>Katie and Levin's romance blossomed while they were living in San Francisco. Their first date was at Java Beach Cafe. Katie was there early; Levin ordered a BLT for breakfast. Engrossed in conversation, they walked on Ocean Beach down to The Cliff House and back multiple times over. Parting ways with a "we should do this again sometime," and they did.</p>
@@ -238,9 +238,9 @@ const App = () => {
               <div className="tab-pane photos-pane">
                 <div className="gallery-grid">
                   {galleryPhotos.map((photo, idx) => (
-                    <div 
-                      key={idx} 
-                      className="gallery-item" 
+                    <div
+                      key={idx}
+                      className="gallery-item"
                       onClick={() => {
                         setIndex(idx);
                         setOpen(true);
@@ -259,7 +259,7 @@ const App = () => {
                 <p className="text-center">Details coming soon...</p>
               </div>
             )}
-            
+
             {activeTab === 'RSVP' && (
               <div className="tab-pane rsvp-pane">
                 {!submitted ? (
@@ -268,8 +268,8 @@ const App = () => {
                     {selectedGroup.length === 0 ? (
                       <div className="rsvp-search-box">
                         <p>To RSVP, please search for your name below:</p>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           placeholder={isLoadingGuests ? "Loading guest list..." : "Enter your name..."}
                           className="rsvp-input"
                           value={rsvpSearch}
@@ -279,8 +279,8 @@ const App = () => {
                         {filteredGuests.length > 0 && (
                           <div className="guest-results">
                             {filteredGuests.map(guest => (
-                              <button 
-                                key={guest.Name} 
+                              <button
+                                key={guest.Name}
                                 className="guest-choice"
                                 onClick={() => handleSelectGuest(guest)}
                               >
@@ -300,7 +300,7 @@ const App = () => {
                           {selectedGroup.map(member => (
                             <div key={member.Name} className="group-member-card">
                               <h3 className="member-name">{member.Name}</h3>
-                              
+
                               <div className="form-group">
                                 <label>ATTENDING?</label>
                                 <div className="radio-group-row">
