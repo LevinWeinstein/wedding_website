@@ -2,8 +2,16 @@ import React, { useState, useEffect } from 'react';
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import './App.css';
+import RsvpForm from './components/RsvpForm';
+import RegretsBanner from './components/RegretsBanner';
 
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvr8it1UNDgrvQmKOEoAsiBmTtg_LSlYgdUsshkpYqnQv26Wf3yAjxkeOekIxuUrMeGA/exec';
+
+// Set to true to show the RSVP tab and the RSVP hero button
+const SHOW_RSVP = false;
+
+// Set to true to show the terracotta "Can't Attend? Let us know" banner on the Home page
+const SHOW_REGRETS = true;
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('Home');
@@ -11,23 +19,10 @@ const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
-  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null);
 
-  // RSVP State
+  // Guests list state (fetched once at the top level and shared)
   const [guests, setGuests] = useState([]);
-  const [rsvpSearch, setRsvpSearch] = useState('');
-  const [selectedGroup, setSelectedGroup] = useState([]);
-  const [groupResponses, setGroupResponses] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const [isLoadingGuests, setIsLoadingGuests] = useState(true);
-
-  // Regrets State
-  const [showRegretsForm, setShowRegretsForm] = useState(false);
-  const [regretsSearch, setRegretsSearch] = useState('');
-  const [selectedRegretGuest, setSelectedRegretGuest] = useState(null);
-  const [declineList, setDeclineList] = useState([]); // List of names to decline
-  const [regretsSubmitted, setRegretsSubmitted] = useState(false);
 
   useEffect(() => {
     // Fetch real guests from Google Sheets
@@ -55,124 +50,13 @@ const App = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const tabs = ['Home', 'Our Story', 'Photos', 'Travel', 'Registry', 'RSVP'];
+  const tabs = SHOW_RSVP
+    ? ['Home', 'Our Story', 'Photos', 'Travel', 'Registry', 'RSVP']
+    : ['Home', 'Our Story', 'Photos', 'Travel', 'Registry'];
 
   const galleryPhotos = Array.from({ length: 17 }, (_, i) => ({
     src: `${import.meta.env.BASE_URL}images/gallery/photo_${i + 3}.jpg`
   }));
-
-  const filteredGuests = rsvpSearch.length >= 2
-    ? guests.filter(g => g.Name.toLowerCase().includes(rsvpSearch.toLowerCase()))
-    : [];
-
-  const filteredRegrets = regretsSearch.length >= 2
-    ? guests.filter(g => g.Name.toLowerCase().includes(regretsSearch.toLowerCase()))
-    : [];
-
-  const handleSelectGuest = (guest) => {
-    // Find everyone in the same GroupID
-    const group = guests.filter(g => g.GroupID === guest.GroupID && guest.GroupID !== '');
-    // If no GroupID, just the individual
-    const finalGroup = group.length > 0 ? group : [guest];
-
-    setSelectedGroup(finalGroup);
-
-    const initialResponses = {};
-    finalGroup.forEach(member => {
-      initialResponses[member.Name] = {
-        name: member.Name,
-        attending: member.Attending || '',
-        meal: member.Meal || '',
-        notes: member.Notes || '',
-        email: member.Email || '',
-        phone: member.Phone || ''
-      };
-    });
-    setGroupResponses(initialResponses);
-  };
-
-  const updateResponse = (name, field, value) => {
-    setGroupResponses(prev => ({
-      ...prev,
-      [name]: { ...prev[name], [field]: value }
-    }));
-  };
-
-  const handleSubmitRSVP = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    const payload = Object.values(groupResponses);
-
-    try {
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors', // Apps Script requires no-cors for simple POSTs
-        body: JSON.stringify(payload),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      // Since no-cors doesn't return success body, we assume success if no error thrown
-      setIsSubmitting(false);
-      setSubmitted(true);
-    } catch (err) {
-      console.error("Error submitting RSVP:", err);
-      setIsSubmitting(false);
-      alert("Something went wrong. Please try again!");
-    }
-  };
-
-  const handleQuickNo = async (e) => {
-    e.preventDefault();
-    if (declineList.length === 0) return;
-    setIsSubmitting(true);
-    
-    const payload = declineList.map(name => ({
-      name: name,
-      attending: 'no',
-      meal: 'N/A',
-      notes: 'Quick Decline from Banner',
-      email: '',
-      phone: ''
-    }));
-
-    try {
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify(payload),
-        headers: { 'Content-Type': 'application/json' }
-      });
-      setIsSubmitting(false);
-      setRegretsSubmitted(true);
-      setTimeout(() => {
-        setShowRegretsForm(false);
-        setRegretsSubmitted(false);
-        setRegretsSearch('');
-        setSelectedRegretGuest(null);
-        setDeclineList([]);
-      }, 3000);
-    } catch (err) {
-      console.error("Error submitting Regret:", err);
-      setIsSubmitting(false);
-      alert("Something went wrong. Please try again!");
-    }
-  };
-
-  const handleSelectRegretGuest = (guest) => {
-    const group = guests.filter(g => g.GroupID === guest.GroupID && guest.GroupID !== '');
-    const finalGroup = group.length > 0 ? group : [guest];
-    setSelectedRegretGuest(guest);
-    // Default to only the person who searched
-    setDeclineList([guest.Name]);
-  };
-
-  const toggleDeclineMember = (name) => {
-    setDeclineList(prev => 
-      prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]
-    );
-  };
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const handleTabClick = (tab) => {
@@ -263,87 +147,15 @@ const App = () => {
                   <h2 className="handwritten">Mill Valley, California</h2>
                 </div>
 
-                <div className="regrets-banner hero-regrets-banner">
-                  <h3>CAN'T ATTEND? LET US KNOW HERE</h3>
-                  {!showRegretsForm ? (
-                    <button className="regrets-btn" onClick={() => setShowRegretsForm(true)}>LET US KNOW</button>
-                  ) : (
-                    <div className="quick-no-form">
-                      {regretsSubmitted ? (
-                        <p className="quick-no-success">Thank you for letting us know. We'll miss you!</p>
-                      ) : (
-                        <>
-                          {!selectedRegretGuest ? (
-                            <>
-                              <p style={{fontSize: '0.8rem', marginBottom: '1rem'}}>Search your name to quickly decline:</p>
-                              <input 
-                                type="text" 
-                                className="quick-no-input" 
-                                placeholder="Your name..."
-                                value={regretsSearch}
-                                onChange={(e) => setRegretsSearch(e.target.value)}
-                              />
-                              {filteredRegrets.length > 0 && (
-                                <div className="guest-results">
-                                  {filteredRegrets.map(guest => (
-                                    <button 
-                                      key={guest.Name} 
-                                      className="guest-choice"
-                                      onClick={() => handleSelectRegretGuest(guest)}
-                                    >
-                                      {guest.Name}
-                                    </button>
-                                  ))}
-                                </div>
-                              )}
-                            </>
-                          ) : (
-                            <form onSubmit={handleQuickNo}>
-                              <p style={{marginBottom: '0.5rem', fontWeight: '500'}}>Thank you for your early reply!</p>
-                              <p style={{marginBottom: '1.5rem', fontSize: '0.9rem'}}>We're sorry we won't see you!</p>
-                              
-                              <p style={{marginBottom: '1rem', fontStyle: 'italic', fontSize: '0.9rem'}}>Who from your party can <span style={{textDecoration: 'underline'}}>definitely</span> not attend?</p>
-                              
-                              <div className="decline-checklist" style={{textAlign: 'left', marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '10px'}}>
-                                {guests.filter(g => g.GroupID === selectedRegretGuest.GroupID && selectedRegretGuest.GroupID !== '').map(member => (
-                                  <label key={member.Name} style={{display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1rem', cursor: 'pointer'}}>
-                                    <input 
-                                      type="checkbox" 
-                                      checked={declineList.includes(member.Name)}
-                                      onChange={() => toggleDeclineMember(member.Name)}
-                                      style={{width: '20px', height: '20px'}}
-                                    />
-                                    {member.Name}
-                                  </label>
-                                ))}
-                                {(!selectedRegretGuest.GroupID || selectedRegretGuest.GroupID === '') && (
-                                   <label style={{display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1rem'}}>
-                                     <input type="checkbox" checked={true} readOnly style={{width: '20px', height: '20px'}} />
-                                     {selectedRegretGuest.Name}
-                                   </label>
-                                )}
-                              </div>
+                {SHOW_REGRETS && (
+                  <RegretsBanner guests={guests} SCRIPT_URL={SCRIPT_URL} />
+                )}
 
-                              <div style={{display: 'flex', gap: '10px'}}>
-                                <button type="button" className="rsvp-back-btn" style={{flex: 1}} onClick={() => setSelectedRegretGuest(null)}>Back</button>
-                                <button type="submit" className="quick-no-submit" style={{flex: 2}} disabled={isSubmitting || declineList.length === 0}>
-                                  {isSubmitting ? 'Sending...' : `Decline for ${declineList.length} Guest${declineList.length !== 1 ? 's' : ''}`}
-                                </button>
-                              </div>
-                            </form>
-                          )}
-                          {!selectedRegretGuest && (
-                            <button className="nav-link" style={{marginTop: '1rem', fontSize: '0.7rem'}} onClick={() => setShowRegretsForm(false)}>Cancel</button>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                <div className="home-hero-actions">
-                  <button className="rsvp-hero-btn" onClick={() => setActiveTab('RSVP')}>RSVP</button>
-                </div>
+                {SHOW_RSVP && (
+                  <div className="home-hero-actions">
+                    <button className="rsvp-hero-btn" onClick={() => setActiveTab('RSVP')}>RSVP</button>
+                  </div>
+                )}
 
                 <div className="wedding-day-summary">
                   <h3>WEDDING DAY</h3>
@@ -402,109 +214,9 @@ const App = () => {
               </div>
             )}
 
-            {activeTab === 'RSVP' && (
+            {SHOW_RSVP && activeTab === 'RSVP' && (
               <div className="tab-pane rsvp-pane">
-                {!submitted ? (
-                  <div className="rsvp-container">
-                    <h2 className="section-title">RSVP</h2>
-                    {selectedGroup.length === 0 ? (
-                      <div className="rsvp-search-box">
-                        <p>To RSVP, please search for your name below:</p>
-                        <input
-                          type="text"
-                          placeholder={isLoadingGuests ? "Loading guest list..." : "Enter your name..."}
-                          className="rsvp-input"
-                          value={rsvpSearch}
-                          onChange={(e) => setRsvpSearch(e.target.value)}
-                          disabled={isLoadingGuests}
-                        />
-                        {filteredGuests.length > 0 && (
-                          <div className="guest-results">
-                            {filteredGuests.map(guest => (
-                              <button
-                                key={guest.Name}
-                                className="guest-choice"
-                                onClick={() => handleSelectGuest(guest)}
-                              >
-                                {guest.Name}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                        {rsvpSearch.length >= 2 && filteredGuests.length === 0 && !isLoadingGuests && (
-                          <p className="no-results">We couldn't find your name. Please try another variation or contact us!</p>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="rsvp-form">
-                        <p className="selected-name">Welcome! Please RSVP for your party:</p>
-                        <form onSubmit={handleSubmitRSVP}>
-                          {selectedGroup.map(member => (
-                            <div key={member.Name} className="group-member-card">
-                              <h3 className="member-name">{member.Name}</h3>
-
-                              <div className="form-group">
-                                <label>ATTENDING?</label>
-                                <div className="radio-group-row">
-                                  <label><input type="radio" name={`attending-${member.Name}`} value="yes" required onChange={(e) => updateResponse(member.Name, 'attending', e.target.value)} /> Yes</label>
-                                  <label><input type="radio" name={`attending-${member.Name}`} value="no" onChange={(e) => updateResponse(member.Name, 'attending', e.target.value)} /> No</label>
-                                </div>
-                              </div>
-
-                              {groupResponses[member.Name]?.attending === 'yes' && (
-                                <>
-                                  <div className="form-group">
-                                    <label>MEAL PREFERENCE</label>
-                                    <select className="rsvp-select" required onChange={(e) => updateResponse(member.Name, 'meal', e.target.value)}>
-                                      <option value="">Select a meal...</option>
-                                      <option value="beef">Grilled Filet Mignon</option>
-                                      <option value="fish">Pan-Seared Sea Bass</option>
-                                      <option value="veg">Wild Mushroom Risotto (V)</option>
-                                    </select>
-                                  </div>
-
-                                  <div className="form-grid">
-                                    <div className="form-group">
-                                      <label>EMAIL</label>
-                                      <input type="email" className="rsvp-input-small" placeholder="email@example.com" onChange={(e) => updateResponse(member.Name, 'email', e.target.value)} />
-                                    </div>
-                                    <div className="form-group">
-                                      <label>PHONE</label>
-                                      <input type="tel" className="rsvp-input-small" placeholder="555-555-5555" onChange={(e) => updateResponse(member.Name, 'phone', e.target.value)} />
-                                    </div>
-                                  </div>
-
-                                  <div className="form-group">
-                                    <label>ALLERGIES / NOTES</label>
-                                    <textarea className="rsvp-textarea" placeholder="Any special requests?" onChange={(e) => updateResponse(member.Name, 'notes', e.target.value)}></textarea>
-                                  </div>
-                                </>
-                              )}
-                              <hr className="member-divider" />
-                            </div>
-                          ))}
-
-                          <div className="rsvp-buttons">
-                            <button type="button" className="rsvp-back-btn" onClick={() => setSelectedGroup([])}>Back</button>
-                            <button type="submit" className="rsvp-submit-btn" disabled={isSubmitting}>
-                              {isSubmitting ? 'Submitting...' : 'Submit All RSVPs'}
-                            </button>
-                          </div>
-                        </form>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="rsvp-success">
-                    <h3>Thank you!</h3>
-                    <p>Your party's RSVPs have been received.</p>
-                    <button className="rsvp-back-btn" onClick={() => {
-                      setSubmitted(false);
-                      setSelectedGroup([]);
-                      setRsvpSearch('');
-                    }}>Done</button>
-                  </div>
-                )}
+                <RsvpForm guests={guests} isLoadingGuests={isLoadingGuests} SCRIPT_URL={SCRIPT_URL} />
               </div>
             )}
           </div>
