@@ -81,7 +81,7 @@ const KeepInTouch = ({ guests, setGuests, SCRIPT_URL }) => {
 
   return (
     <div className="regrets-banner keep-in-touch-banner">
-      <h3>GIVE US YOUR EMAIL SO WE CAN KEEP IN TOUCH!</h3>
+      <h3>GIVE US YOUR CONTACT INFO SO WE CAN KEEP IN TOUCH!</h3>
       {!showForm ? (
         <button className="regrets-btn" onClick={() => setShowForm(true)}>SHARE YOUR EMAIL</button>
       ) : (
