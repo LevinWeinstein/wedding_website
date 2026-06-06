@@ -4,6 +4,7 @@ import "yet-another-react-lightbox/styles.css";
 import './App.css';
 import RsvpForm from './components/RsvpForm';
 import RegretsBanner from './components/RegretsBanner';
+import KeepInTouch from './components/KeepInTouch';
 
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvr8it1UNDgrvQmKOEoAsiBmTtg_LSlYgdUsshkpYqnQv26Wf3yAjxkeOekIxuUrMeGA/exec';
 
@@ -12,6 +13,9 @@ const SHOW_RSVP = false;
 
 // Set to true to show the terracotta "Can't Attend? Let us know" banner on the Home page
 const SHOW_REGRETS = true;
+
+// Set to true to show the "Give us your email so we can keep in touch" banner on the Home page
+const SHOW_KEEP_IN_TOUCH = true;
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('Home');
@@ -149,6 +153,10 @@ const App = () => {
 
                 {SHOW_REGRETS && (
                   <RegretsBanner guests={guests} SCRIPT_URL={SCRIPT_URL} />
+                )}
+
+                {SHOW_KEEP_IN_TOUCH && (
+                  <KeepInTouch guests={guests} setGuests={setGuests} SCRIPT_URL={SCRIPT_URL} />
                 )}
 
                 {SHOW_RSVP && (

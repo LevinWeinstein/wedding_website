@@ -8,7 +8,9 @@ const RegretsBanner = ({ guests, SCRIPT_URL }) => {
   const [regretsSubmitted, setRegretsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const filteredRegrets = regretsSearch.length >= 2
+  // Require a fairly specific search (7+ characters) so the full guest list
+  // can't be discovered by typing a single letter.
+  const filteredRegrets = regretsSearch.length >= 7
     ? guests.filter(g => g.Name.toLowerCase().includes(regretsSearch.toLowerCase()))
     : [];
 
@@ -31,14 +33,20 @@ const RegretsBanner = ({ guests, SCRIPT_URL }) => {
     if (declineList.length === 0) return;
     setIsSubmitting(true);
     
-    const payload = declineList.map(name => ({
-      name: name,
-      attending: 'no',
-      meal: 'N/A',
-      notes: 'Quick Decline from Banner',
-      email: '',
-      phone: ''
-    }));
+    const payload = declineList.map(name => {
+      // The backend overwrites every column on the matched row, so send back
+      // the guest's existing email/phone to avoid wiping a "keep in touch"
+      // email someone may have shared earlier.
+      const guest = guests.find(g => g.Name === name) || {};
+      return {
+        name: name,
+        attending: 'no',
+        meal: 'N/A',
+        notes: 'Quick Decline from Banner',
+        email: guest.Email || '',
+        phone: guest.Phone || ''
+      };
+    });
 
     try {
       await fetch(SCRIPT_URL, {

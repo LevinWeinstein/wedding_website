@@ -503,6 +503,34 @@ body {
   margin-top: 1rem;
 }
 
+/* Keep In Touch banner — olive tint to distinguish from the terracotta regrets banner */
+.keep-in-touch-banner {
+  background: #f4f5ed;
+  border-top: 1px solid #e0e3d3;
+  border-bottom: 1px solid #e0e3d3;
+  margin-top: 1rem;
+  margin-bottom: 3rem;
+  padding: 3rem 2rem;
+}
+
+.keep-in-touch-banner h3 {
+  color: var(--text-olive);
+}
+
+.keep-in-touch-banner .regrets-btn {
+  border-color: var(--text-olive);
+  color: var(--text-olive);
+}
+
+.keep-in-touch-banner .regrets-btn:hover {
+  background: var(--text-olive);
+  color: white;
+}
+
+.keep-in-touch-banner .quick-no-success {
+  color: var(--text-olive);
+}
+
 /* Responsive Styling */
 @media (max-width: 768px) {
   body {

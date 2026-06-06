@@ -38,15 +38,23 @@ function doPost(e) {
   const notesIdx = headers.indexOf("Notes");
   const emailIdx = headers.indexOf("Email");
   const phoneIdx = headers.indexOf("Phone");
+  const addressIdx = headers.indexOf("Address");
+
+  // Only write a value when it's actually present (not undefined/null/blank),
+  // so a form that omits or blanks a field never clobbers existing data.
+  function hasValue(v) {
+    return v !== undefined && v !== null && String(v).trim() !== "";
+  }
 
   responses.forEach(res => {
     for (let i = 1; i < data.length; i++) {
       if (data[i][nameIdx].toLowerCase() === res.name.toLowerCase()) {
-        if (attendIdx > -1) sheet.getRange(i + 1, attendIdx + 1).setValue(res.attending);
-        if (mealIdx > -1) sheet.getRange(i + 1, mealIdx + 1).setValue(res.meal);
-        if (notesIdx > -1) sheet.getRange(i + 1, notesIdx + 1).setValue(res.notes);
-        if (emailIdx > -1) sheet.getRange(i + 1, emailIdx + 1).setValue(res.email);
-        if (phoneIdx > -1) sheet.getRange(i + 1, phoneIdx + 1).setValue(res.phone);
+        if (attendIdx > -1 && hasValue(res.attending)) sheet.getRange(i + 1, attendIdx + 1).setValue(res.attending);
+        if (mealIdx > -1 && hasValue(res.meal)) sheet.getRange(i + 1, mealIdx + 1).setValue(res.meal);
+        if (notesIdx > -1 && hasValue(res.notes)) sheet.getRange(i + 1, notesIdx + 1).setValue(res.notes);
+        if (emailIdx > -1 && hasValue(res.email)) sheet.getRange(i + 1, emailIdx + 1).setValue(res.email);
+        if (phoneIdx > -1 && hasValue(res.phone)) sheet.getRange(i + 1, phoneIdx + 1).setValue(res.phone);
+        if (addressIdx > -1 && hasValue(res.address)) sheet.getRange(i + 1, addressIdx + 1).setValue(res.address);
       }
     }
   });
