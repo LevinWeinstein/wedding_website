@@ -83,14 +83,14 @@ const KeepInTouch = ({ guests, setGuests, SCRIPT_URL }) => {
     <div className="regrets-banner keep-in-touch-banner">
       <h3>GIVE US YOUR CONTACT INFO SO WE CAN KEEP IN TOUCH!</h3>
       {!showForm ? (
-        <button className="regrets-btn" onClick={() => setShowForm(true)}>SHARE YOUR EMAIL</button>
+        <button className="regrets-btn" onClick={() => setShowForm(true)}>SHARE YOUR CONTACT INFO</button>
       ) : (
         <div className="quick-no-form">
           {submitted ? (
             <p className="quick-no-success">Thank you! We'll be in touch.</p>
           ) : !selectedGuest ? (
             <>
-              <p style={{fontSize: '0.8rem', marginBottom: '1rem'}}>Search your name to share your email:</p>
+              <p style={{fontSize: '0.8rem', marginBottom: '1rem'}}>Search your name to share your contact info:</p>
               <input
                 type="text"
                 className="quick-no-input"
